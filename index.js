@@ -4,6 +4,7 @@ const users = require("./routes/users");
 const auth = require("./routes/auth");
 const express = require("express");
 const app = express();
+const session = require("express-session");
 
 if (!config.get("jwtPrivateKey")) {
   console.error("FATAL ERROR: jwtPrivateKey is not defined.");
@@ -11,8 +12,17 @@ if (!config.get("jwtPrivateKey")) {
 }
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", users);
 app.use("/api/auth", auth);
+
+app.use(
+  session({
+    secret: "secret key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 const db = "mongodb://localhost:27017/test";
 

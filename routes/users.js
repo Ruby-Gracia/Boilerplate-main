@@ -23,6 +23,7 @@ router.post("/", async (req, res) => {
   await user.save();
 
   const token = user.generateAuthToken();
+  res.json({ status: "user registered successfully" });
 });
 
 module.exports = router;
