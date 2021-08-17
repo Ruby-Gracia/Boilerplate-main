@@ -27,7 +27,7 @@ app.use(
   })
 );
 
-const db = "mongodb://localhost:27017/test";
+const db = config.get("db");
 
 mongoose.connect(db, {
   useUnifiedTopology: true,
