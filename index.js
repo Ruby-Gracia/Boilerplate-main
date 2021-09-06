@@ -1,3 +1,4 @@
+const cors = require("cors");
 const config = require("config");
 const mongoose = require("mongoose");
 const users = require("./routes/users");
@@ -6,10 +7,16 @@ const express = require("express");
 const app = express();
 const session = require("express-session");
 
-if (!config.get("jwtPrivateKey")) {
+if (!process.env.jwtPrivateKey) {
   console.error("FATAL ERROR: jwtPrivateKey is not defined.");
   process.exit(1);
 }
+
+const allowedOrigins = [
+  "http://localhost:3000/",
+  "http://localhost:3001/",
+  "https://uberchat2021.herokuapp.com/",
+];
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,22 +34,8 @@ app.use(
   })
 );
 
-const db = config.get("db");
-
-mongoose.connect(db, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-});
-
-mongoose.connection.on("error", (err) => {
-  console.log("Mongoose Connection ERROR: " + err.message);
-});
-
-mongoose.connection.once("open", () => {
-  console.log("MongoDB Connected!");
-});
+const connectDB = require("./config/db");
+connectDB();
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
